@@ -82,6 +82,7 @@
             <label for="name">Name</label>
             <input type="text" class="form-control" name="name" id="name" onchange="onUserName()" placeholder="Enter your full name" required>
 
+
             <span id="displayName" style="color:red"></span>
         </div>
 
@@ -101,14 +102,14 @@
 
         <div class="form-group">
             <label for="altEmail">Alternate Email</label>
-            <input type="text" class="form-control" name="alternateEmail" id="altEmail" onchange="onInputChange('altEmail','displayAltEmail')" placeholder="Enter an alternate email">
+            <input type="text" class="form-control" name="alternateEmail" id="altEmail" onchange="onInputChange('altEmail','displayAltEmail')" placeholder="Enter an alternate email" required>
             <span id="displayAltEmail" style="color:red"></span>
              <div id="emailValidationMessage" style="color: red; font-weight: bold;"></div>
         </div>
 
         <div class="form-group">
             <label for="altPhone">Alternate Phone</label>
-            <input type="tel" class="form-control" id="altPhone" name="alternatePhone" onchange="onInputChange('altPhone','displayAltPhone')" placeholder="Enter an alternate phone number">
+            <input type="tel" class="form-control" id="altPhone" name="alternatePhone" onchange="onInputChange('altPhone','displayAltPhone')" placeholder="Enter an alternate phone number" required>
             <span id="displayAltPhone" style="color:red"></span>
             <div id="phoneValidationMessage" style="color: red; font-weight: bold;"></div>
         </div>
@@ -122,84 +123,113 @@
     </form>
 </div>
 <script>
-   function onUserName(){
-        console.log('this is user name');
-        var userName=document.getElementById('name');
-        console.log('userName');
-        var userValue=userName.value;
+  function onUserName() {
+      var userName = document.getElementById('name');
+      var userValue = userName.value;
 
-        var xhttp =new XMLHttpRequest();
-        xhttp.open("GET","http://localhost:8082/Xworkz_CommonModule_GunashreeB/name/"+userValue);
-        xhttp.send();
-
-        xhttp.onload =function(){
-            document.getElementById("displayName").innerHTML = this.responseText;
-        }
-   }
-   function onEmail(){
-           console.log('this is user name');
-           var userEmail=document.getElementById('email');
-           var userValue=userEmail.value;
-
-           var xhttp =new XMLHttpRequest();
-           xhttp.open("GET","http://localhost:8082/Xworkz_CommonModule_GunashreeB/email/"+userValue);
-           xhttp.send();
-
-            xhttp.onload =function(){
-                       document.getElementById("displayEmail").innerHTML = this.responseText;
+      if (!userValue) {
+          document.getElementById("displayName").innerHTML = "Name cannot be empty.";
+          return;
+      } else if (!/^[A-Za-z\s]{3,50}$/.test(userValue)) {
+          document.getElementById("displayName").innerHTML = "Name must be between 3 and 50 characters and contain only letters.";
+          return;
+      } else {
+          document.getElementById("displayName").innerHTML = "";
       }
 
-     validateEmails()
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "http://localhost:8082/Xworkz_CommonModule_GunashreeB/name/" + userValue);
+      xhttp.onload = function () {
+          document.getElementById("displayName").innerHTML = this.responseText;
+      };
+      xhttp.send();
+  }
 
+  function onEmail() {
+      var userEmail = document.getElementById('email');
+      var userValue = userEmail.value;
 
+      if (!userValue) {
+          document.getElementById("displayEmail").innerHTML = "Email cannot be empty.";
+          return;
 
+      } else if (!/^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(userValue)) {
+          document.getElementById("displayEmail").innerHTML = "Invalid email format.";
+          return;
+      } else {
+          document.getElementById("displayEmail").innerHTML = "";
       }
 
-  function onInputChange(fieldId,spanId) {
-       console.log('Input changed for field:', fieldId);
-       var inputElement = document.getElementById(fieldId);
-       var inputValue = inputElement.value;
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "http://localhost:8082/Xworkz_CommonModule_GunashreeB/email/" + userValue);
+      xhttp.onload = function () {
+          document.getElementById("displayEmail").innerHTML = this.responseText;
+      };
+      xhttp.send();
 
-       var xhttp = new XMLHttpRequest();
-       xhttp.open("GET", "http://localhost:8082/Xworkz_CommonModule_GunashreeB/" + fieldId + "/" + inputValue);
-       xhttp.send();
+      validateEmails();
+  }
 
-       xhttp.onload =function(){
-                 document.getElementById(spanId).innerHTML = this.responseText;
-   }
+  function onInputChange(fieldId, spanId) {
+      var inputElement = document.getElementById(fieldId);
+      var inputValue = inputElement.value;
 
-     if (fieldId === 'altEmail') {
-                    validateEmails();
-                }
-                else if (fieldId === 'altPhone') {
-                        validatePhones();
-                    }
+      if (!inputValue) {
+          document.getElementById(spanId).innerHTML = "Cannot be empty.";
+          return;
+      }
 
-   }
+      if (fieldId === 'phone' || fieldId === 'altPhone') {
+          if (!/^\d{10}$/.test(inputValue)) {
+              document.getElementById(spanId).innerHTML = "Phone number must be exactly 10 digits.";
+              return;
+          }
+      } else if (fieldId === 'altEmail') {
+          if (!/^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(inputValue)) {
+              document.getElementById(spanId).innerHTML = "Invalid email format.";
+              return;
+          }
+      }
 
-   function validateEmails() {
-       const email = document.getElementById('email').value;
-       const altEmail = document.getElementById('altEmail').value;
-       const validationMessage = document.getElementById('emailValidationMessage');
+      document.getElementById(spanId).innerHTML = "";
 
-       if (email && altEmail && email === altEmail) {
-           validationMessage.textContent = "Email and alternate email cannot be the same.";
-       } else {
-           validationMessage.textContent = "";
-       }
-   }
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "http://localhost:8082/Xworkz_CommonModule_GunashreeB/" + fieldId + "/" + inputValue);
+      xhttp.onload = function () {
+          document.getElementById(spanId).innerHTML = this.responseText;
+      };
+      xhttp.send();
 
-   function validatePhones() {
-       const phone = document.getElementById('phone').value;
-       const altPhone = document.getElementById('altPhone').value;
-       const phoneValidationMessage = document.getElementById('phoneValidationMessage');
+      if (fieldId === 'altEmail') {
+          validateEmails();
+      } else if (fieldId === 'altPhone') {
+          validatePhones();
+      }
+  }
 
-       if (phone && altPhone && phone === altPhone) {
-           phoneValidationMessage.textContent = "Phone and alternate phone cannot be the same.";
-       } else {
-           phoneValidationMessage.textContent = "";
-       }
-   }
+  function validateEmails() {
+      const email = document.getElementById('email').value;
+      const altEmail = document.getElementById('altEmail').value;
+      const validationMessage = document.getElementById('emailValidationMessage');
+
+      if (email && altEmail && email === altEmail) {
+          validationMessage.textContent = "Email and alternate email cannot be the same.";
+      } else {
+          validationMessage.textContent = "";
+      }
+  }
+
+  function validatePhones() {
+      const phone = document.getElementById('phone').value;
+      const altPhone = document.getElementById('altPhone').value;
+      const phoneValidationMessage = document.getElementById('phoneValidationMessage');
+
+      if (phone && altPhone && phone === altPhone) {
+          phoneValidationMessage.textContent = "Phone and alternate phone cannot be the same.";
+      } else {
+          phoneValidationMessage.textContent = "";
+      }
+  }
 
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

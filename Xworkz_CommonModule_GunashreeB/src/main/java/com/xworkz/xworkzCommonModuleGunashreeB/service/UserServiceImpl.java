@@ -24,27 +24,31 @@ public class UserServiceImpl implements UserService{
     @Override
     public Set<ConstraintViolation<UserDTO>> save(UserDTO userDTO) {
 
-        System.out.println(userDTO.toString());
-        String password=generatePassword(userDTO.getEmail());
-        System.out.println(password);
         UserEntity userEntity=new UserEntity();
-        userEntity.setName(userDTO.getName());
-        userEntity.setEmail(userDTO.getEmail());
-        userEntity.setPhone(userDTO.getPhone());
-        userEntity.setAlternateEmail(userDTO.getAlternateEmail());
-        userEntity.setAlternatePhone(userDTO.getAlternatePhone());
-        userEntity.setLocation(userDTO.getLocation());
-        userEntity.setPassword(passwordEncoder.encode(password));
-        userEntity.setLoginCount(-1);
-        ValidatorFactory vf= Validation.buildDefaultValidatorFactory();
-        Validator validator = vf.getValidator();
-        Set<ConstraintViolation<UserDTO>> set=validator.validate(userDTO);
-        if(set.isEmpty()) {
-            boolean save = repository.save(userEntity);
-            repository.saveEmail(userDTO.getEmail(), password);
-        }
+        if(userDTO!=null) {
+            System.out.println(userDTO.toString());
+            String password = generatePassword(userDTO.getEmail());
+            System.out.println(password);
+
+            userEntity.setName(userDTO.getName());
+            userEntity.setEmail(userDTO.getEmail());
+            userEntity.setPhone(userDTO.getPhone());
+            userEntity.setAlternateEmail(userDTO.getAlternateEmail());
+            userEntity.setAlternatePhone(userDTO.getAlternatePhone());
+            userEntity.setLocation(userDTO.getLocation());
+            userEntity.setPassword(passwordEncoder.encode(password));
+            userEntity.setLoginCount(-1);
+            ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
+            Validator validator = vf.getValidator();
+            Set<ConstraintViolation<UserDTO>> set = validator.validate(userDTO);
+            if (set.isEmpty()) {
+                boolean save = repository.save(userEntity);
+                repository.saveEmail(userDTO.getEmail(), password);
+            }
 
             return set;
+        }
+        return null;
     }
 
     @Override
