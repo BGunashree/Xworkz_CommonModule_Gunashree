@@ -1,6 +1,7 @@
 package com.xworkz.xworkzCommonModuleGunashreeB.service;
 
 import com.xworkz.xworkzCommonModuleGunashreeB.dto.UserDTO;
+import com.xworkz.xworkzCommonModuleGunashreeB.entity.AbstractAuditEntity;
 import com.xworkz.xworkzCommonModuleGunashreeB.entity.UserEntity;
 import com.xworkz.xworkzCommonModuleGunashreeB.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 
@@ -23,6 +25,8 @@ public class UserServiceImpl implements UserService{
     PasswordEncoder passwordEncoder;
     @Override
     public Set<ConstraintViolation<UserDTO>> save(UserDTO userDTO) {
+
+        AbstractAuditEntity entity=new AbstractAuditEntity();
 
         UserEntity userEntity=new UserEntity();
         if(userDTO!=null) {
@@ -38,18 +42,25 @@ public class UserServiceImpl implements UserService{
             userEntity.setLocation(userDTO.getLocation());
             userEntity.setPassword(passwordEncoder.encode(password));
             userEntity.setLoginCount(-1);
+            userEntity.setCreatedBy(userDTO.getName());
+            userEntity.getCreatedDate();
             ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
             Validator validator = vf.getValidator();
             Set<ConstraintViolation<UserDTO>> set = validator.validate(userDTO);
             if (set.isEmpty()) {
-                boolean save = repository.save(userEntity);
-                repository.saveEmail(userDTO.getEmail(), password);
+
+               if(getNameCount(userDTO.getName())==0 && getEmailCount(userDTO.getEmail())==0 && getPhoneCount(userDTO.getPhone())==0 &&
+                       getAltEmailCount(userDTO.getAlternateEmail())==0 && getAltPhoneCount(userEntity.getAlternatePhone()) ==0 ) {
+                   boolean save = repository.save(userEntity);
+                   repository.saveEmail(userDTO.getEmail(), password);
+               }
             }
 
             return set;
         }
         return null;
     }
+
 
     @Override
     public String generatePassword(String email) {
@@ -68,6 +79,28 @@ public class UserServiceImpl implements UserService{
         password= String.valueOf(string.reverse().append(100+random.nextInt(900)));
 
         return password;
+    }
+
+    @Override
+    public Set<ConstraintViolation<UserDTO>> updateDetails(String name,UserDTO userDTO,String filePath) {
+
+        if(userDTO!=null)
+        {
+            userDTO.setName(name);
+            System.out.println(userDTO.toString());
+
+            ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
+            Validator validator = vf.getValidator();
+            Set<ConstraintViolation<UserDTO>> set = validator.validate(userDTO);
+            if(set.isEmpty())
+            {
+                boolean updated=repository.updateDetails( name,userDTO,filePath);
+
+            }
+            return set;
+        }
+
+        return null;
     }
 
     @Override
@@ -141,6 +174,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public Long getAltPhoneCount(Long altPhoneNumber) {
         return repository.getAltPhoneCount(altPhoneNumber);
+    }
+
+    @Override
+    public UserEntity getAllByName(String name) {
+
+        UserEntity entity=repository.getAllByName(name);
+        if(entity!=null)
+            return entity;
+        return null;
     }
 
 

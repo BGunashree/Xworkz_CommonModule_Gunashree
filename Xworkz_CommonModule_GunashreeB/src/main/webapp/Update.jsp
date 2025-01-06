@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignUp Form</title>
+    <title>Update Form</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
@@ -72,23 +72,18 @@
 
 <jsp:include page="Header.jsp"/>
 <div class="form-container">
-    <h2><i class="fas fa-user-edit"></i> Register</h2>
+    <h2><i class="fas fa-user-edit"></i> Update Details</h2>
    <c:forEach  items="${error}" var="i" >
                 <span style="color:red">${i.message}</span>
                 </c:forEach>
 
-    <form action="submit" method="post">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" id="name" onchange="onUserName()" placeholder="Enter your full name" required>
+<c:set var="userName"  value="${userName}" />
+    <form action="update" method="post" enctype="multipart/form-data">
 
-
-            <span id="displayName" style="color:red"></span>
-        </div>
-
+        <input type="text" name="userName"  value="${userName}"  readonly/>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" class="form-control"  name="email" id="email" onchange="onEmail()" placeholder="Enter your email" required>
+            <input type="text" class="form-control" value="${entity.email}" name="email" id="email" onchange="onEmail()" placeholder="Enter your email" required>
             <span id="displayEmail" style="color:red"></span>
 
 
@@ -96,20 +91,20 @@
 
         <div class="form-group">
             <label for="phone">Phone</label>
-            <input type="tel" class="form-control" name="phone" id="phone" onchange="onInputChange('phone','displayPhone')" placeholder="Enter your phone number" required>
+            <input type="tel" class="form-control" value="${entity.phone}" name="phone" id="phone" onchange="onInputChange('phone','displayPhone')" placeholder="Enter your phone number" required>
             <span id="displayPhone" style="color:red"></span>
         </div>
 
         <div class="form-group">
             <label for="altEmail">Alternate Email</label>
-            <input type="text" class="form-control" name="alternateEmail" id="altEmail" onchange="onInputChange('altEmail','displayAltEmail')" placeholder="Enter an alternate email" required>
+            <input type="text" class="form-control" value="${entity.alternateEmail}" name="alternateEmail" id="altEmail" onchange="onInputChange('altEmail','displayAltEmail')" placeholder="Enter an alternate email" required>
             <span id="displayAltEmail" style="color:red"></span>
              <div id="emailValidationMessage" style="color: red; font-weight: bold;"></div>
         </div>
 
         <div class="form-group">
             <label for="altPhone">Alternate Phone</label>
-            <input type="tel" class="form-control" id="altPhone" name="alternatePhone" onchange="onInputChange('altPhone','displayAltPhone')" placeholder="Enter an alternate phone number" required>
+            <input type="tel" class="form-control" value="${entity.alternatePhone}" id="altPhone" name="alternatePhone" onchange="onInputChange('altPhone','displayAltPhone')" placeholder="Enter an alternate phone number" required>
             <span id="displayAltPhone" style="color:red"></span>
             <div id="phoneValidationMessage" style="color: red; font-weight: bold;"></div>
         </div>
@@ -124,32 +119,19 @@
            </select>
        </div>
 
+      <div class="form-group">
+          <label for="picture">Choose Picture</label>
+          <input type="file" class="form-control" id="picture" name="picture" accept="image/*" >
+          <small class="form-text text-muted">Only image files (e.g., JPG, PNG) are allowed.</small>
+      </div>
+
+
 
         <button type="submit" class="btn btn-custom btn-block"><i class="fas fa-paper-plane"></i>Submit</button>
     </form>
 </div>
 <script>
-  function onUserName() {
-      var userName = document.getElementById('name');
-      var userValue = userName.value;
 
-      if (!userValue) {
-          document.getElementById("displayName").innerHTML = "Name cannot be empty.";
-          return;
-      } else if (!/^[A-Za-z\s]{3,50}$/.test(userValue)) {
-          document.getElementById("displayName").innerHTML = "Name must be between 3 and 50 characters and contain only letters.";
-          return;
-      } else {
-          document.getElementById("displayName").innerHTML = "";
-      }
-
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("GET", "http://localhost:8082/Xworkz_CommonModule_GunashreeB/name/" + userValue);
-      xhttp.onload = function () {
-          document.getElementById("displayName").innerHTML = this.responseText;
-      };
-      xhttp.send();
-  }
 
   function onEmail() {
       var userEmail = document.getElementById('email');

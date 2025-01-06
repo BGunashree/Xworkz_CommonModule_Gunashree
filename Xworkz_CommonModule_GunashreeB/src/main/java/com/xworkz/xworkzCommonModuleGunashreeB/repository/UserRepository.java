@@ -1,5 +1,6 @@
 package com.xworkz.xworkzCommonModuleGunashreeB.repository;
 
+import com.xworkz.xworkzCommonModuleGunashreeB.dto.UserDTO;
 import com.xworkz.xworkzCommonModuleGunashreeB.entity.UserEntity;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface UserRepository {
 
     Long getAltPhoneCount(Long altPhoneNumber);
 
-
+   boolean updateDetails(String name,UserDTO dto,String filePath);
 
     UserEntity getAllByName(String name);
 

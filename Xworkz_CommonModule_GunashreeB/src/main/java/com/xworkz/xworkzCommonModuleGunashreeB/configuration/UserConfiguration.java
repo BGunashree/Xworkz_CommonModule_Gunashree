@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
@@ -23,6 +25,7 @@ import javax.sql.DataSource;
 public class UserConfiguration {
 
 
+    private int size=5*1024*1024;
     public UserConfiguration()
     {
         System.out.println("running UserConfiguration");
@@ -60,6 +63,15 @@ public class UserConfiguration {
     @Bean
     public Validator validatorFactory() {
         return new LocalValidatorFactoryBean();
+    }
+
+    @Bean(name="multipartResolver")
+    public CommonsMultipartResolver multipartResolver()
+    {
+        CommonsMultipartResolver commonsMultipartResolver=new CommonsMultipartResolver();
+        commonsMultipartResolver.setMaxInMemorySize(size);
+        commonsMultipartResolver.setMaxUploadSize(size);
+        return  commonsMultipartResolver;
     }
 
 }

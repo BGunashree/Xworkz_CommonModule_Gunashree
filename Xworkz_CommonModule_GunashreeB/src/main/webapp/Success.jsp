@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,14 +50,43 @@
             animation: bounceIn 1s;
         }
 
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-buttons form,
+        .action-buttons a {
+            flex: 1;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-update {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        .btn-update:hover {
+            background-color: #138496;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+        }
+
         .btn-home {
             background-color: #28a745;
             color: #fff;
-            padding: 12px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .btn-home:hover {
@@ -76,25 +107,44 @@
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            60% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
+    <c:set var="userName" value="${userName}" />
 
     <div class="success-container">
         <div class="success-icon">
             <i class="fas fa-check-circle"></i>
         </div>
-        <h1>Successful!</h1>
 
-        <a href="index.jsp" class="btn btn-home"><i class="fas fa-home"></i> Go to Home</a>
+        <h1>Successful!</h1>
+        <p>Welcome <strong>${userName}</strong>!</p>
+
+        <div class="action-buttons">
+            <!-- Update Details Form -->
+            <form action="updating" method="post">
+                <input type="hidden" name="userName" value="${userName}" />
+                <button type="submit" class="btn btn-update"><i class="fas fa-edit"></i> Update Details</button>
+            </form>
+
+            <!-- Home Button -->
+            <a href="index.jsp" class="btn btn-home"><i class="fas fa-home"></i> Go to Home</a>
+        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>

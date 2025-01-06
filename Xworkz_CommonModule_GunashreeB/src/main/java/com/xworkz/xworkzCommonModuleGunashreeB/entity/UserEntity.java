@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 
 @NamedQuery(name="check" , query ="select count(*) from UserEntity ue where ue.name =:ByName and ue.password =:ByPassword")
-
+@NamedQuery(name="updateDetails", query="update UserEntity ue set ue.email =:setEmail, ue.phone =:setPhone, ue.alternateEmail =:setAltEmail, ue.alternatePhone =:setAltPhone, ue.location =:setLocation ,ue.updatedBy =:setUpdatedName, ue.updatedDate =:setUpdatedDate, ue.filePath =:setFilePath where ue.name =:byName")
 @NamedQuery(name="countName" , query ="select count(*) from UserEntity ue where ue.name =:ByName")
 @NamedQuery(name="countEmail" , query ="select count(*) from UserEntity ue where ue.email =:ByEmail")
 @NamedQuery(name="countPhone" , query ="select count(*) from UserEntity ue where ue.phone =:ByPhone")
@@ -27,7 +27,7 @@ import javax.persistence.*;
 
 
 @NamedQuery(name="resetLoginCount",query="update UserEntity ue set ue.loginCount =:SetLoginCount where ue.email =:byEmail")
-public class UserEntity {
+public class UserEntity extends AbstractAuditEntity {
 
 
     @Id

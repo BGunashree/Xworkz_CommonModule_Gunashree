@@ -1,6 +1,7 @@
 package com.xworkz.xworkzCommonModuleGunashreeB.repository;
 
 
+import com.xworkz.xworkzCommonModuleGunashreeB.dto.UserDTO;
 import com.xworkz.xworkzCommonModuleGunashreeB.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -158,6 +160,58 @@ public class UserRepositoryImpl implements  UserRepository{
         return countField("countAltPhone", "ByAltPhone", altPhoneNumber);
     }
 
+    @Override
+    public boolean updateDetails(String name,UserDTO dto,String filePath) {
+
+
+        System.out.println(dto.toString());
+        System.out.println(name);
+        EntityManager em=emf.createEntityManager();
+        EntityTransaction et=em.getTransaction();
+
+        boolean isUpdated=false;
+        try{
+            et.begin();
+            int value= em.createNamedQuery("updateDetails").setParameter("setEmail",dto.getEmail()).setParameter("setPhone",dto.getPhone()).setParameter("setAltEmail",dto.getAlternateEmail()).setParameter("setAltPhone",dto.getAlternatePhone()).setParameter("setLocation",dto.getLocation()).setParameter("setUpdatedName",dto.getName()).setParameter("setUpdatedDate", LocalDateTime.now()).setParameter("setFilePath",filePath).setParameter("byName",name).executeUpdate();
+            if(value>0)
+            {
+                isUpdated=true;
+
+                System.out.println("updated");
+            }
+            else
+            {
+                isUpdated=false;
+                System.out.println("not Updated");
+            }
+            et.commit();
+        }
+        catch(Exception e)
+        {
+            if(et.isActive())
+            {
+                et.rollback();
+            }
+
+        }
+        finally {
+            em.close();
+            //` emf.close();
+        }
+        if(isUpdated)
+        {
+            System.out.println("updated");
+            return true;
+        }
+        else
+        {
+            System.out.println("not Updated");
+            return  false;
+        }
+
+
+
+    }
 
 
     @Override

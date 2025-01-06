@@ -126,3 +126,12 @@ public class UserRestController {
         return null;
     }
 }
+
+
+
+
+
+
+
+
+//            <input type="text" class="form-control" id="location" name="location"  placeholder="Enter your location" required>
